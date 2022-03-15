@@ -9,12 +9,12 @@ import 'package:synchronized/synchronized.dart';
 /// [onImageCaptured].
 class CustomMarker extends StatefulWidget {
   final Widget child;
-  final Function(Uint8List?)? onImageCaptured;
-  final Duration? screenshotDelay;
+  final Function(Uint8List) onImageCaptured;
+  final Duration screenshotDelay;
 
   const CustomMarker(
-      {Key? key,
-      required this.child,
+      {Key key,
+      @required this.child,
       this.onImageCaptured,
       this.screenshotDelay})
       : super(key: key);
@@ -26,7 +26,7 @@ class CustomMarker extends StatefulWidget {
 class _CustomMarkerState extends State<CustomMarker> {
   final GlobalKey key = GlobalKey();
   final Function eq = const ListEquality().equals;
-  Uint8List? _lastImage;
+  Uint8List _lastImage;
   final lock = Lock();
 
   @override
@@ -41,7 +41,7 @@ class _CustomMarkerState extends State<CustomMarker> {
         await Future.delayed(
             widget.screenshotDelay ?? const Duration(milliseconds: 500));
         final _image = await _capturePng(key);
-        if (_lastImage == null || !eq(_lastImage!, _image)) {
+        if (_lastImage == null || !eq(_lastImage, _image)) {
           _lastImage = _image;
           widget.onImageCaptured?.call(_image);
         }
@@ -53,18 +53,18 @@ class _CustomMarkerState extends State<CustomMarker> {
     );
   }
 
-  Future<Uint8List?> _capturePng(GlobalKey iconKey) async {
+  Future<Uint8List> _capturePng(GlobalKey iconKey) async {
     try {
-      final RenderRepaintBoundary? boundary =
-          iconKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      final RenderRepaintBoundary boundary =
+          iconKey.currentContext.findRenderObject() as RenderRepaintBoundary;
       if (boundary?.debugNeedsPaint ?? false) {
         await Future.delayed(const Duration(milliseconds: 200));
         return _capturePng(iconKey);
       }
-      ui.Image? image = await boundary?.toImage(pixelRatio: 3.0);
-      ByteData? byteData =
+      ui.Image image = await boundary?.toImage(pixelRatio: 3.0);
+      ByteData byteData =
           await image?.toByteData(format: ui.ImageByteFormat.png);
-      var pngBytes = byteData?.buffer.asUint8List();
+      var pngBytes = byteData.buffer.asUint8List();
       return pngBytes;
     } catch (e) {
       return null;

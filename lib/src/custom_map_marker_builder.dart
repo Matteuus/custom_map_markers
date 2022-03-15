@@ -23,20 +23,20 @@ class CustomMapMarkerBuilder extends StatelessWidget {
   /// Widget builder that carries [imagesData] which is `null` when marker
   /// images are not ready yet or list of [Uint8List] when custom markers
   /// are ready.
-  final Widget Function(BuildContext context, List<Uint8List>? imagesData)
+  final Widget Function(BuildContext context, List<Uint8List> imagesData)
       builder;
 
   /// [controller] controls the state of captured images from widgets.
-  late final _MarkersController controller;
+  _MarkersController controller;
 
   CustomMapMarkerBuilder({
-    Key? key,
-    required this.markerWidgets,
-    required this.builder,
+    Key key,
+    @required this.markerWidgets,
+    @required this.builder,
     this.screenshotDelay = const Duration(milliseconds: 500),
   }) : super(key: key) {
     controller = _MarkersController(
-        value: List<Uint8List?>.filled(markerWidgets.length, null),
+        value: List<Uint8List>.filled(markerWidgets.length, null),
         childCount: markerWidgets.length);
   }
 
@@ -45,21 +45,21 @@ class CustomMapMarkerBuilder extends StatelessWidget {
     return Stack(
       children: [
         ...List.generate(
-              markerWidgets.length,
-              (index) => Positioned(
-                    left: -MediaQuery.of(context).size.width,
-                    child: CustomMarker(
-                      child: markerWidgets[index],
-                      screenshotDelay: screenshotDelay,
-                      onImageCaptured: (data) {
-                        controller.updateRenderedImage(index, data);
-                      },
-                    ),
-                  )),
+            markerWidgets.length,
+            (index) => Positioned(
+                  left: -MediaQuery.of(context).size.width,
+                  child: CustomMarker(
+                    child: markerWidgets[index],
+                    screenshotDelay: screenshotDelay,
+                    onImageCaptured: (data) {
+                      controller.updateRenderedImage(index, data);
+                    },
+                  ),
+                )),
         ValueListenableBuilder(
             valueListenable: controller,
             builder:
-                (BuildContext context, List<Uint8List?> value, Widget? child) {
+                (BuildContext context, List<Uint8List> value, Widget child) {
               return builder(context, controller.images);
             })
       ],
@@ -86,12 +86,12 @@ class CustomGoogleMapMarkerBuilder extends StatelessWidget {
   /// Widget builder that carries [imagesData] which is `null` when marker
   /// images are not ready yet or list of google maps [Marker] when custom
   /// markers are ready.
-  final Widget Function(BuildContext, Set<Marker>? markers) builder;
+  final Widget Function(BuildContext, Set<Marker> markers) builder;
 
   const CustomGoogleMapMarkerBuilder(
-      {Key? key,
-      required this.customMarkers,
-      required this.builder,
+      {Key key,
+      @required this.customMarkers,
+      @required this.builder,
       this.screenshotDelay = const Duration(milliseconds: 500)})
       : super(key: key);
 
@@ -101,7 +101,7 @@ class CustomGoogleMapMarkerBuilder extends StatelessWidget {
       screenshotDelay: screenshotDelay,
       markerWidgets:
           customMarkers.map((customMarker) => customMarker.child).toList(),
-      builder: (BuildContext context, List<Uint8List>? customMarkerImagesData) {
+      builder: (BuildContext context, List<Uint8List> customMarkerImagesData) {
         return builder(
             context,
             customMarkerImagesData == null
@@ -121,23 +121,24 @@ class MarkerData {
   final Marker marker;
   final Widget child;
 
-  MarkerData({required this.marker, required this.child});
+  MarkerData({@required this.marker, @required this.child});
 }
 
 /// [_MarkersController] handles the state of rendered markers and notify
 /// listeners when all marker are rendered and captured.
 
-class _MarkersController extends ValueNotifier<List<Uint8List?>> {
+class _MarkersController extends ValueNotifier<List<Uint8List>> {
   final int childCount;
 
-  late final List<Uint8List?> renderedWidgets;
+  List<Uint8List> renderedWidgets;
 
-  _MarkersController({required List<Uint8List?> value, required this.childCount})
+  _MarkersController(
+      {@required List<Uint8List> value, @required this.childCount})
       : super(value) {
-    renderedWidgets = List<Uint8List?>.filled(childCount, null);
+    renderedWidgets = List<Uint8List>.filled(childCount, null);
   }
 
-  updateRenderedImage(int index, Uint8List? data) {
+  updateRenderedImage(int index, Uint8List data) {
     renderedWidgets[index] = data;
     if (ready) {
       value = List.from(renderedWidgets);
@@ -146,5 +147,5 @@ class _MarkersController extends ValueNotifier<List<Uint8List?>> {
 
   bool get ready => !renderedWidgets.any((image) => image == null);
 
-  List<Uint8List>? get images => ready ? value.cast<Uint8List>() : null;
+  List<Uint8List> get images => ready ? value.cast<Uint8List>() : null;
 }

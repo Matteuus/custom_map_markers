@@ -7,7 +7,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key key, @required this.title}) : super(key: key);
   final String title;
 
   @override
@@ -48,31 +48,31 @@ class _MyHomePageState extends State<MyHomePage> {
         //screenshotDelay: const Duration(seconds: 4),
         customMarkers: [
           MarkerData(
-              marker: Marker(
-                  markerId: const MarkerId('id-1'), position: locations[0]),
+              marker:
+                  Marker(markerId: MarkerId('id-1'), position: locations[0]),
               child: _customMarker3('Everywhere\nis a Widgets', Colors.blue)),
           MarkerData(
-              marker: Marker(
-                  markerId: const MarkerId('id-5'), position: locations[4]),
+              marker:
+                  Marker(markerId: MarkerId('id-5'), position: locations[4]),
               child: _customMarker('A', Colors.black)),
           MarkerData(
-              marker: Marker(
-                  markerId: const MarkerId('id-2'), position: locations[1]),
+              marker:
+                  Marker(markerId: MarkerId('id-2'), position: locations[1]),
               child: _customMarker('B', Colors.red)),
           MarkerData(
-              marker: Marker(
-                  markerId: const MarkerId('id-3'), position: locations[2]),
+              marker:
+                  Marker(markerId: MarkerId('id-3'), position: locations[2]),
               child: _customMarker('C', Colors.green)),
           MarkerData(
-              marker: Marker(
-                  markerId: const MarkerId('id-4'), position: locations[3]),
+              marker:
+                  Marker(markerId: MarkerId('id-4'), position: locations[3]),
               child: _customMarker2('D', Colors.purple)),
           MarkerData(
-              marker: Marker(
-                  markerId: const MarkerId('id-5'), position: locations[4]),
+              marker:
+                  Marker(markerId: MarkerId('id-5'), position: locations[4]),
               child: _customMarker('A', Colors.blue)),
         ],
-        builder: (BuildContext context, Set<Marker>? markers) {
+        builder: (BuildContext context, Set<Marker> markers) {
           if (markers == null) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -82,9 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
               zoom: 14.4746,
             ),
             markers: markers,
-            onMapCreated: (GoogleMapController controller) {
-
-            },
+            onMapCreated: (GoogleMapController controller) {},
           );
         },
       ),
@@ -120,13 +118,10 @@ class _MyHomePageState extends State<MyHomePage> {
       height: 30,
       margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        border: Border.all(color: color , width: 2),
-          color: Colors.white, borderRadius: BorderRadius.circular(15),boxShadow: [
-            BoxShadow(
-              color: color,
-              blurRadius: 6
-            )
-      ]),
+          border: Border.all(color: color, width: 2),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [BoxShadow(color: color, blurRadius: 6)]),
       child: Center(child: Text(symbol)),
     );
   }
@@ -136,14 +131,15 @@ class _MyHomePageState extends State<MyHomePage> {
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-          border: Border.all(color: color , width: 2),
-          color: Colors.white, borderRadius: BorderRadius.circular(4),boxShadow: [
-        BoxShadow(
-            color: color,
-            blurRadius: 6
-        )
-      ]),
-      child: Center(child: Text(text , textAlign: TextAlign.center,)),
+          border: Border.all(color: color, width: 2),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          boxShadow: [BoxShadow(color: color, blurRadius: 6)]),
+      child: Center(
+          child: Text(
+        text,
+        textAlign: TextAlign.center,
+      )),
     );
   }
 }
